@@ -48100,7 +48100,7 @@ const {
   CI
 } = process.env;
 const logLevel = CI ? src/* LogLevel.INFO */["in"].INFO : src/* LogLevel.DEBUG */["in"].DEBUG;
-async function getFeedUrlsFromNotion() {
+async function getFeedFromNotion() {
   const notion = new src/* Client */.KU({
     auth: NOTION_API_TOKEN,
     logLevel
@@ -48124,10 +48124,15 @@ async function getFeedUrlsFromNotion() {
     return [];
   }
 
-  const feeds = response.results.map(item => ({
-    title: item.properties.Title.title[0].plain_text,
-    feedUrl: item.properties.Link.url
-  }));
+  const feeds = response.results.map(item => {
+    var _item$properties$Auth, _item$properties$Auth2;
+
+    return {
+      title: item.properties.Title.title[0].plain_text,
+      feedUrl: item.properties.Link.url,
+      auth: (_item$properties$Auth = item.properties.Auth) === null || _item$properties$Auth === void 0 ? void 0 : (_item$properties$Auth2 = _item$properties$Auth.rich_text[0]) === null || _item$properties$Auth2 === void 0 ? void 0 : _item$properties$Auth2.plain_text
+    };
+  });
   return feeds;
 }
 async function addFeedItemToNotion(notionItem) {
@@ -48224,8 +48229,22 @@ const {
   RUN_FREQUENCY
 } = process.env;
 
-async function getNewFeedItemsFrom(feedUrl) {
-  const parser = new (rss_parser_default())();
+async function getNewFeedItemsFrom(feed) {
+  const {
+    feedUrl,
+    auth
+  } = feed;
+  let options = {};
+
+  if (auth) {
+    options = {
+      headers: {
+        Authorization: auth
+      }
+    };
+  }
+
+  const parser = new (rss_parser_default())(options);
   let rss;
 
   try {
@@ -48248,13 +48267,10 @@ async function getNewFeedItemsFrom(feedUrl) {
 
 async function getNewFeedItems() {
   let allNewFeedItems = [];
-  const feeds = await getFeedUrlsFromNotion();
+  const feeds = await getFeedFromNotion();
 
   for (let i = 0; i < feeds.length; i++) {
-    const {
-      feedUrl
-    } = feeds[i];
-    const feedItems = await getNewFeedItemsFrom(feedUrl);
+    const feedItems = await getNewFeedItemsFrom(feeds[i]);
     allNewFeedItems = [...allNewFeedItems, ...feedItems];
   } // sort feed items by published date
 
@@ -49229,6 +49245,7 @@ function jsonToNotionBlocks(markdownContent) {
 }
 
 function htmlToNotionBlocks(htmlContent) {
+  htmlContent.replaceAll('src=&quot;//', "'src=&quot;https://'");
   const markdownJson = htmlToMarkdownJSON(htmlContent);
   return jsonToNotionBlocks(markdownJson);
 }
