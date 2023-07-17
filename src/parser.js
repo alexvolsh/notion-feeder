@@ -16,6 +16,7 @@ function jsonToNotionBlocks(markdownContent) {
 }
 
 export default function htmlToNotionBlocks(htmlContent) {
-  const markdownJson = htmlToMarkdownJSON(htmlContent);
+  const formatted = htmlContent.replace('src="//', 'src="https://');
+  const markdownJson = htmlToMarkdownJSON(formatted);
   return jsonToNotionBlocks(markdownJson);
 }

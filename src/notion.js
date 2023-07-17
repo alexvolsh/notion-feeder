@@ -12,7 +12,7 @@ const {
 
 const logLevel = CI ? LogLevel.INFO : LogLevel.DEBUG;
 
-export async function getFeedUrlsFromNotion() {
+export async function getFeedFromNotion() {
   const notion = new Client({
     auth: NOTION_API_TOKEN,
     logLevel,
@@ -41,6 +41,7 @@ export async function getFeedUrlsFromNotion() {
   const feeds = response.results.map((item) => ({
     title: item.properties.Title.title[0].plain_text,
     feedUrl: item.properties.Link.url,
+    auth: item.properties.Auth?.rich_text[0]?.plain_text,
   }));
 
   return feeds;

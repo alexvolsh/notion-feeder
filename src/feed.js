@@ -1,14 +1,21 @@
 import Parser from 'rss-parser';
 import dotenv from 'dotenv';
 import timeDifference from './helpers';
-import { getFeedUrlsFromNotion } from './notion';
+import { getFeedFromNotion } from './notion';
 
 dotenv.config();
 
 const { RUN_FREQUENCY } = process.env;
 
-async function getNewFeedItemsFrom(feedUrl) {
-  const parser = new Parser();
+async function getNewFeedItemsFrom(feed) {
+  const { feedUrl, auth } = feed;
+  let options = {};
+  if (auth) {
+    options = {
+      headers: { Authorization: auth },
+    };
+  }
+  const parser = new Parser(options);
   let rss;
   try {
     rss = await parser.parseURL(feedUrl);
@@ -29,11 +36,10 @@ async function getNewFeedItemsFrom(feedUrl) {
 export default async function getNewFeedItems() {
   let allNewFeedItems = [];
 
-  const feeds = await getFeedUrlsFromNotion();
+  const feeds = await getFeedFromNotion();
 
   for (let i = 0; i < feeds.length; i++) {
-    const { feedUrl } = feeds[i];
-    const feedItems = await getNewFeedItemsFrom(feedUrl);
+    const feedItems = await getNewFeedItemsFrom(feeds[i]);
     allNewFeedItems = [...allNewFeedItems, ...feedItems];
   }
 
