@@ -49245,8 +49245,8 @@ function jsonToNotionBlocks(markdownContent) {
 }
 
 function htmlToNotionBlocks(htmlContent) {
-  htmlContent.replaceAll('src=&quot;//', "'src=&quot;https://'");
-  const markdownJson = htmlToMarkdownJSON(htmlContent);
+  const formatted = htmlContent.replaceAll('src="//', 'src="https://');
+  const markdownJson = htmlToMarkdownJSON(formatted);
   return jsonToNotionBlocks(markdownJson);
 }
 ;// CONCATENATED MODULE: ./src/index.js
