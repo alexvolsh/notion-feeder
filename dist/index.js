@@ -48124,15 +48124,11 @@ async function getFeedFromNotion() {
     return [];
   }
 
-  const feeds = response.results.map(item => {
-    var _item$properties$Auth, _item$properties$Auth2;
-
-    return {
-      title: item.properties.Title.title[0].plain_text,
-      feedUrl: item.properties.Link.url,
-      auth: (_item$properties$Auth = item.properties.Auth) === null || _item$properties$Auth === void 0 ? void 0 : (_item$properties$Auth2 = _item$properties$Auth.rich_text[0]) === null || _item$properties$Auth2 === void 0 ? void 0 : _item$properties$Auth2.plain_text
-    };
-  });
+  const feeds = response.results.map(item => ({
+    title: item.properties.Title.title[0].plain_text,
+    feedUrl: item.properties.Link.url,
+    auth: item.properties.Auth?.rich_text[0]?.plain_text
+  }));
   return feeds;
 }
 async function addFeedItemToNotion(notionItem) {
