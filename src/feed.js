@@ -42,7 +42,7 @@ export default async function getNewFeedItems() {
 
   for (let i = 0; i < feeds.length; i++) {
     const feedItems = await getNewFeedItemsFrom(feeds[i]);
-    console.log("Received " + feedItems.length + " new items from : " + feedUrl);
+    console.log("Received " + feedItems.length + " new items from : " + feeds[i].feedUrl);
     allNewFeedItems = [...allNewFeedItems, ...feedItems];
   }
 
