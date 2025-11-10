@@ -20,6 +20,7 @@ async function getNewFeedItemsFrom(feed) {
   try {
     rss = await parser.parseURL(feedUrl);
   } catch (error) {
+    console.error("Error for: " + feedUrl);
     console.error(error);
     return [];
   }
