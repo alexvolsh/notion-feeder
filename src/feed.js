@@ -18,6 +18,7 @@ async function getNewFeedItemsFrom(feed) {
   const parser = new Parser(options);
   let rss;
   try {
+    console.log("Receiving feeds from: " + feedUrl);
     rss = await parser.parseURL(feedUrl);
   } catch (error) {
     console.error("Error for: " + feedUrl);
@@ -41,6 +42,7 @@ export default async function getNewFeedItems() {
 
   for (let i = 0; i < feeds.length; i++) {
     const feedItems = await getNewFeedItemsFrom(feeds[i]);
+    console.log("Received " + feedItems.length + " new items from : " + feedUrl);
     allNewFeedItems = [...allNewFeedItems, ...feedItems];
   }
 
