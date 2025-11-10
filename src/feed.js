@@ -18,10 +18,10 @@ async function getNewFeedItemsFrom(feed) {
   const parser = new Parser(options);
   let rss;
   try {
-    console.log("Receiving feeds from: " + feedUrl);
+    console.info(`Receiving feeds from:  ${feedUrl}`);
     rss = await parser.parseURL(feedUrl);
   } catch (error) {
-    console.error("Error for: " + feedUrl);
+    console.error(`Error for: ${feedUrl}`);
     console.error(error);
     return [];
   }
@@ -41,8 +41,11 @@ export default async function getNewFeedItems() {
   const feeds = await getFeedFromNotion();
 
   for (let i = 0; i < feeds.length; i++) {
-    const feedItems = await getNewFeedItemsFrom(feeds[i]);
-    console.log("Received " + feedItems.length + " new items from : " + feeds[i].feedUrl);
+    const feed = feeds[i];
+    const feedItems = await getNewFeedItemsFrom(feed);
+    console.info(
+      `Received ${feedItems.length} new items from: ${feed.feedUrl}`
+    );
     allNewFeedItems = [...allNewFeedItems, ...feedItems];
   }
 
